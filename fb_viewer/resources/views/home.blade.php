@@ -13,6 +13,7 @@
 
   function statusChangeCallback(response) {
     var photos = document.getElementById('fb_photos');
+    var posts = document.getElementById('fb_posts');
 
     if (response.status === 'connected') {
       loginChecker();
@@ -29,6 +30,16 @@
             image.style.margin = "10px";
             photos.appendChild(image);
           });
+
+          response.posts.data.forEach(function (value) {
+            var post = document.createElement('div');
+            post.classList.add("fb-post");
+            post.dataset.href=value.permalink_url;
+            post.dataset.width="700";
+            post.dataset.showText="true";
+            post.style.margin = "10px";
+            posts.appendChild(post);
+          });
           FB.XFBML.parse();
         }
       )
@@ -36,6 +47,9 @@
       document.getElementById('status').innerHTML = 'Please log into this app.';
       while (photos.hasChildNodes()) {
         photos.removeChild(photos.firstChild);
+      };
+      while (posts.hasChildNodes()) {
+        posts.removeChild(posts.firstChild);
       };
     };
   };
@@ -72,11 +86,15 @@
           <a class="fb-login-button" data-max-rows="1" data-size="large" data-show-faces="false" data-auto-logout-link="true" data-scope="user_photos,user_posts" onlogin=fbAsyncInit></a>
 
           <div id="status"></div>
+
           <h4>Your photos</h4>
           <div id="fb_photos"></div>
+
+          <h4>Your last posts</h4>
+          <div id="fb_posts"></div>
         </div>
       </div>
-
+      
     </div>
   </div>
 </div>
