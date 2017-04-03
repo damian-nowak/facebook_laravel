@@ -9,14 +9,36 @@
       document.getElementById('status').innerHTML =
         'Thanks for logging in, ' + response.name + '!';
     });
-  }
+  };
+
   function statusChangeCallback(response) {
+    var photos = document.getElementById('fb_photos');
+
     if (response.status === 'connected') {
       loginChecker();
+
+      // Getting data from Graph Api
+      FB.api('/me','GET',
+        {"fields":"id,name,photos,posts.limit(3){permalink_url,story},albums.limit(3){cover_photo,picture}"},
+        function(response) {
+          response.albums.data.forEach(function (value) {
+            var image = document.createElement('img');
+            image.src = value.picture.data.url;
+            image.style.height="200px";
+            image.style.width="200px";
+            image.style.margin = "10px";
+            photos.appendChild(image);
+          });
+          FB.XFBML.parse();
+        }
+      )
     } else {
       document.getElementById('status').innerHTML = 'Please log into this app.';
-    }
-  }
+      while (photos.hasChildNodes()) {
+        photos.removeChild(photos.firstChild);
+      };
+    };
+  };
   window.fbAsyncInit = function() {
     var fbInitEnv={{env('FACEBOOK_APP_ID')}};
     FB.init({
@@ -33,23 +55,29 @@
 </script>
 
 <div class="container">
-    <div class="row">
-        <div class="col-md-12">
-            <div class="panel panel-default">
-                <div class="panel-heading">Dashboard</div>
+  <div class="row">
 
-                <div class="panel-body">
-                    You are logged in!
-                </div>
-            </div>
-            <div class="panel panel-default">
-                  <div class="panel-heading">Your Facebook</div>
-                  <div class="panel-body text-center">
-                    <a class="fb-login-button" data-max-rows="1" data-size="large" data-show-faces="false" data-auto-logout-link="true" data-scope="user_photos,user_posts" onlogin=fbAsyncInit></a>
-                    <div id="status"></div>
-                  </div>
-            </div>
+    <div class="col-md-12">
+      <div class="panel panel-default">
+        <div class="panel-heading">Dashboard</div>
+        <div class="panel-body">
+            You are logged in!
         </div>
+      </div>
+
+      <div class="panel panel-default">
+        <div class="panel-heading">Your Facebook</div>
+        <div class="panel-body text-center">
+
+          <a class="fb-login-button" data-max-rows="1" data-size="large" data-show-faces="false" data-auto-logout-link="true" data-scope="user_photos,user_posts" onlogin=fbAsyncInit></a>
+
+          <div id="status"></div>
+          <h4>Your photos</h4>
+          <div id="fb_photos"></div>
+        </div>
+      </div>
+
     </div>
+  </div>
 </div>
 @endsection
