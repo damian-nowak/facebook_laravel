@@ -21,6 +21,18 @@
     </script>
 </head>
 <body>
+  <!-- Facebook SDK loading  -->
+  <div id="fb-root"></div>
+  <script>(function(d, s, id) {
+    var fbEnv={{env('FACEBOOK_APP_ID')}};
+    console.log(fbEnv);
+    var js, fjs = d.getElementsByTagName(s)[0];
+    if (d.getElementById(id)) return;
+    js = d.createElement(s); js.id = id;
+    js.src = `//connect.facebook.net/pl_PL/sdk.js#xfbml=1&version=v2.8&appId=${fbEnv}`;
+    fjs.parentNode.insertBefore(js, fjs);
+  }(document, 'script', 'facebook-jssdk'));</script>
+
     <div id="app">
         <nav class="navbar navbar-default navbar-static-top">
             <div class="container">
